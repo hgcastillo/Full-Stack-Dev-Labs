@@ -23,7 +23,14 @@ main {
     max-width: 800px;
     margin: auto;
 }
+.dept-group {
+    margin-bottom: 30px;
+}
 
+h2 {
+    color: #0056b3;
+    border-bottom: 1px solid #ccc;
+}
 footer {
     text-align: center;
     padding: 20px;
