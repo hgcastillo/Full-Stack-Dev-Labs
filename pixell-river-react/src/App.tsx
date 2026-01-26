@@ -1,52 +1,20 @@
-import { useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Layout } from "./components/Layout";
+import { EmployeesPage } from "./pages/EmployeesPage";
+import { OrganizationPage } from "./pages/OrganizationPage";
 import "./App.css";
-import { Header } from "./components/Header";
-import { DepartmentSection } from "./components/DepartmentSection";
-import { EmployeeForm } from "./components/EmployeeForm";
-import { organizationData } from "./data/organizationData";
-import { type Employee } from "./types/Employee";
 
 function App() {
-  const currentYear = new Date().getFullYear();
-
-  const [orgData, setOrgData] = useState(organizationData);
-
-  const handleAddEmployee = (newEmp: Employee, deptName: string) => {
-    setOrgData((prevData) => {
-      return prevData.map((dept) => {
-        if (dept.name === deptName) {
-          return {
-            ...dept,
-            employees: [...dept.employees, newEmp],
-          };
-        }
-        return dept;
-      });
-    });
-  };
-
   return (
-    <div className="App">
-      <Header />
-
-      <main id="employee-container">
-        {orgData.map((dept) => (
-          <DepartmentSection
-            key={dept.name}
-            name={dept.name}
-            employees={dept.employees}
-          />
-        ))}
-
-        <hr />
-
-        <EmployeeForm departments={orgData} onAddEmployee={handleAddEmployee} />
-      </main>
-
-      <footer>
-        <p>Copyright Pixell River Financial {currentYear}.</p>
-      </footer>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Navigate to="/employees" replace />} />
+          <Route path="employees" element={<EmployeesPage />} />
+          <Route path="organization" element={<OrganizationPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

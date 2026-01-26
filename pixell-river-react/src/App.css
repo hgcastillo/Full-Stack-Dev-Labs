@@ -56,7 +56,7 @@ footer {
   text-align: center;
   padding: 20px;
   font-size: 0.9rem;
-  color: #777;
+  color: #181414;
   border-top: 1px solid #eee;
   margin-top: 20px;
 }
@@ -147,4 +147,31 @@ hr {
   border: 0;
   border-top: 1px solid #eee;
   margin: 40px 0;
+}
+
+.leadership-list {
+  list-style-type: none;
+  padding: 0;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.leader-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+  background-color: white;
+}
+
+.leader-name {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.leader-role {
+  color: #666;
+  font-style: italic;
+  text-align: right;
 }
