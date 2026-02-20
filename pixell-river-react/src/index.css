@@ -72,7 +72,7 @@ button:focus-visible {
   justify-content: space-between;
   padding: 10px;
   border-bottom: 1px solid #ccc;
-  background-color: white;
+  background-color: white; /* Or match your theme */
   color: #333;
 }
 
@@ -90,5 +90,4 @@ nav {
   padding: 1rem;
   background-color: #eee;
   justify-content: center;
-  font-display: block;
 }

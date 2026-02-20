@@ -1,24 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DepartmentSection } from "../components/DepartmentSection";
 import { EmployeeForm } from "../components/EmployeeForm";
-import { organizationData } from "../data/organizationData";
-import { type Employee } from "../types/Employee";
+import { employeeRepo } from "../api/employeeRepo";
+import type { Department } from "../types/Employee";
 
 export const EmployeesPage = () => {
-  const [orgData, setOrgData] = useState(organizationData);
+  const [orgData, setOrgData] = useState<Department[]>([]);
 
-  const handleAddEmployee = (newEmp: Employee, deptName: string) => {
-    setOrgData((prevData) => {
-      return prevData.map((dept) => {
-        if (dept.name === deptName) {
-          return {
-            ...dept,
-            employees: [...dept.employees, newEmp],
-          };
-        }
-        return dept;
-      });
-    });
+  // Load data on mount
+  useEffect(() => {
+    setOrgData(employeeRepo.getDepartments());
+  }, []);
+
+  const refreshData = () => {
+    // Force a re-render with updated data
+    setOrgData([...employeeRepo.getDepartments()]);
   };
 
   return (
@@ -31,7 +27,7 @@ export const EmployeesPage = () => {
         />
       ))}
       <hr />
-      <EmployeeForm departments={orgData} onAddEmployee={handleAddEmployee} />
+      <EmployeeForm departments={orgData} onEmployeeAdded={refreshData} />
     </div>
   );
 };
