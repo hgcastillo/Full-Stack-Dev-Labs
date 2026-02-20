@@ -66,3 +66,28 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.leader-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  background-color: white; /* Or match your theme */
+  color: #333;
+}
+
+.leader-name {
+  font-weight: bold;
+}
+
+.leader-role {
+  font-style: italic;
+}
+
+nav {
+  display: flex;
+  gap: 20px;
+  padding: 1rem;
+  background-color: #eee;
+  justify-content: center;
+}

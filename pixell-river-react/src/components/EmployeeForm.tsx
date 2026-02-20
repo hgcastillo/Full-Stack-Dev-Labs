@@ -1,67 +1,59 @@
-import { useState, type FormEvent } from "react";
-import { type Department, type Employee } from "../types/Employee";
+import { type FormEvent, useState } from "react";
+import type { Department } from "../types/Employee";
+import { useFormInput } from "../hooks/useFormInput";
+import { employeeService } from "../services/employeeService";
 
 interface Props {
   departments: Department[];
-  onAddEmployee: (employee: Employee, departmentName: string) => void;
+  onEmployeeAdded: () => void;
 }
 
-export const EmployeeForm = ({ departments, onAddEmployee }: Props) => {
-  const [firstName, setFirstName] = useState("");
-  const [selectedDept, setSelectedDept] = useState("");
-  const [error, setError] = useState<string | null>(null);
+export const EmployeeForm = ({ departments, onEmployeeAdded }: Props) => {
+  // Use custom hooks
+  const nameInput = useFormInput("");
+  const deptInput = useFormInput("");
+  const [globalError, setGlobalError] = useState<string | null>(null);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    setGlobalError(null);
 
-    setError(null);
+    try {
+      // Service handles validation and saving
+      employeeService.createEmployee(nameInput.value, deptInput.value);
 
-    if (firstName.trim().length < 3) {
-      setError("First name must be at least 3 characters long.");
-      return;
+      // Success: Clear inputs and refresh parent
+      nameInput.reset();
+      deptInput.reset();
+      onEmployeeAdded();
+    } catch (err: any) {
+      // Failure: Display the error from the service
+      setGlobalError(err.message);
     }
-
-    if (!selectedDept) {
-      setError("Please select a department.");
-      return;
-    }
-
-    const newEmployee: Employee = { firstName };
-    onAddEmployee(newEmployee, selectedDept);
-
-    setFirstName("");
-    setSelectedDept("");
   };
 
   return (
     <section className="employee-form-container">
       <h2>Add New Employee</h2>
+      {globalError && <div className="error-message">{globalError}</div>}
 
-      {error && <div className="error-message">{error}</div>}
-
-      <form onSubmit={handleSubmit} className="add-employee-form">
+      <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="firstName">First Name:</label>
+          <label>First Name:</label>
           <input
-            id="firstName"
             type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            placeholder="e.g. Sarah"
+            value={nameInput.value}
+            onChange={nameInput.onChange}
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="department">Department:</label>
-          <select
-            id="department"
-            value={selectedDept}
-            onChange={(e) => setSelectedDept(e.target.value)}
-          >
+          <label>Department:</label>
+          <select value={deptInput.value} onChange={deptInput.onChange}>
             <option value="">-- Select Department --</option>
-            {departments.map((dept) => (
-              <option key={dept.name} value={dept.name}>
-                {dept.name}
+            {departments.map((d) => (
+              <option key={d.name} value={d.name}>
+                {d.name}
               </option>
             ))}
           </select>
