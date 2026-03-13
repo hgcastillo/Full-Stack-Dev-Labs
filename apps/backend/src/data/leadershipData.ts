@@ -1,4 +1,4 @@
-import { type Role } from "../types/Role";
+import { type Role } from "../../../frontend/src/types/Role";
 
 export const leadershipData: Role[] = [
   { id: "1", role: "CEO/Chair of Board", name: "Jo-Anne Sinclair" },

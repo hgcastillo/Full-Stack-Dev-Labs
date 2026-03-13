@@ -6,16 +6,26 @@ import type { Department } from "../types/Employee";
 
 export const EmployeesPage = () => {
   const [orgData, setOrgData] = useState<Department[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Load data on mount
+  // Load data on mount using async/await
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const data = await employeeRepo.getDepartments();
+      setOrgData(data);
+    } catch (error) {
+      console.error("Failed to load employees:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    setOrgData(employeeRepo.getDepartments());
+    loadData();
   }, []);
 
-  const refreshData = () => {
-    // Force a re-render with updated data
-    setOrgData([...employeeRepo.getDepartments()]);
-  };
+  if (loading) return <div>Loading Employees...</div>;
 
   return (
     <div className="employees-page">
@@ -27,7 +37,8 @@ export const EmployeesPage = () => {
         />
       ))}
       <hr />
-      <EmployeeForm departments={orgData} onEmployeeAdded={refreshData} />
+      {/* Pass the async loadData function as the refresh trigger */}
+      <EmployeeForm departments={orgData} onEmployeeAdded={loadData} />
     </div>
   );
 };
