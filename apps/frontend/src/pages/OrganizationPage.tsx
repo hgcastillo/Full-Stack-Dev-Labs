@@ -5,14 +5,25 @@ import { RoleForm } from "../components/RoleForm";
 
 export const OrganizationPage = () => {
   const [leaders, setLeaders] = useState<Role[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadLeaders = async () => {
+    try {
+      setLoading(true);
+      const data = await leadershipRepo.getRoles();
+      setLeaders(data);
+    } catch (error) {
+      console.error("Failed to load leadership data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setLeaders(leadershipRepo.getRoles());
+    loadLeaders();
   }, []);
 
-  const refreshData = () => {
-    setLeaders([...leadershipRepo.getRoles()]);
-  };
+  if (loading) return <div>Loading Leadership...</div>;
 
   return (
     <div className="organization-page">
@@ -26,7 +37,7 @@ export const OrganizationPage = () => {
         ))}
       </div>
       <hr />
-      <RoleForm onRoleAdded={refreshData} />
+      <RoleForm onRoleAdded={loadLeaders} />
     </div>
   );
 };

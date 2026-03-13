@@ -1,8 +1,13 @@
-import { leadershipRepo } from "../api/leadershipRepo";
+import { leadershipRepo } from "../repositories/leadershipRepository";
 import type { Role } from "../types/Role";
 
-export const roleService = {
+export const leadershipService = {
+  getRoles: () => {
+    return leadershipRepo.getRoles();
+  },
+
   createRole: (name: string, roleTitle: string) => {
+    // Validation logic migrated from Front-End roleService.ts
     if (name.trim().length < 3) {
       throw new Error("Name must be at least 3 characters long.");
     }
@@ -17,7 +22,7 @@ export const roleService = {
     }
 
     const newRole: Role = {
-      id: Math.random().toString(),
+      id: Math.random().toString(), // Temporary ID generation
       name,
       role: roleTitle,
     };
