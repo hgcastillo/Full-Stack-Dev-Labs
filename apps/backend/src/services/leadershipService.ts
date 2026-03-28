@@ -2,17 +2,16 @@ import { leadershipRepo } from "../repositories/leadershipRepository";
 import type { Role } from "../types/Role";
 
 export const leadershipService = {
-  getRoles: () => {
-    return leadershipRepo.getRoles();
+  getRoles: async () => {
+    return await leadershipRepo.getRoles();
   },
 
-  createRole: (name: string, roleTitle: string) => {
-    // Validation logic migrated from Front-End roleService.ts
+  createRole: async (name: string, roleTitle: string) => {
     if (name.trim().length < 3) {
       throw new Error("Name must be at least 3 characters long.");
     }
 
-    const currentRoles = leadershipRepo.getRoles();
+    const currentRoles = await leadershipRepo.getRoles();
     const isOccupied = currentRoles.some(
       (r) => r.role.toLowerCase() === roleTitle.toLowerCase(),
     );
@@ -22,10 +21,10 @@ export const leadershipService = {
     }
 
     const newRole: Role = {
-      id: Math.random().toString(), // Temporary ID generation
+      id: Math.random().toString(), // Dummy ID just to satisfy TS; Prisma generates the real one!
       name,
       role: roleTitle,
     };
-    leadershipRepo.addRole(newRole);
+    await leadershipRepo.addRole(newRole);
   },
 };

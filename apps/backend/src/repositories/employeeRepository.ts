@@ -1,29 +1,27 @@
-import { organizationData } from "../data/organizationData";
-import type { Department, Employee } from "../types/Employee";
+import { prisma } from "../utils/prisma";
+import type { Employee } from "../types/Employee";
 
 export const employeeRepo = {
-  /**
-   * Retrieves the current organizational structure and employee list.
-   * Used by the GET /api/employees route.
-   */
-  getDepartments: (): Department[] => {
-    // Return a copy of the data to maintain immutability
-    return [...organizationData];
+  getDepartments: async () => {
+    return await prisma.department.findMany({
+      include: { employees: true },
+    });
   },
 
-  /**
-   * Adds a new employee to a specific department in the temporary data file.
-   * Used by the POST /api/employees route.
-   */
-  addEmployee: (newEmployee: Employee, departmentName: string): void => {
-    const department = organizationData.find(
-      (dept) => dept.name === departmentName,
-    );
+  addEmployee: async (newEmployee: Employee, departmentName: string) => {
+    const department = await prisma.department.findUnique({
+      where: { name: departmentName },
+    });
 
-    if (department) {
-      department.employees.push(newEmployee);
-    } else {
+    if (!department)
       throw new Error(`Department "${departmentName}" not found.`);
-    }
+
+    await prisma.employee.create({
+      data: {
+        firstName: newEmployee.firstName,
+        lastName: newEmployee.lastName,
+        departmentId: department.id,
+      },
+    });
   },
 };
