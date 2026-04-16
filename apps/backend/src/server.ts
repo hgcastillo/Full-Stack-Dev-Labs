@@ -1,5 +1,6 @@
 import express, { Application } from "express";
 import cors from "cors";
+import { clerkMiddleware } from "@clerk/express";
 import employeeRoutes from "./routes/employeeRoutes";
 import leadershipRoutes from "./routes/leadershipRoutes";
 
@@ -13,6 +14,7 @@ app.use(cors());
 
 // Parse incoming JSON requests
 app.use(express.json());
+app.use(clerkMiddleware());
 
 /**
  * Routes
@@ -32,3 +34,5 @@ app.listen(PORT, () => {
     🛠️  Pattern: Route-Controller-Service-Repository enabled.
     `);
 });
+
+export default app;

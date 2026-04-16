@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
 import { leadershipRepo } from "../api/leadershipRepo";
 import type { Role } from "../types/Role";
 import { RoleForm } from "../components/RoleForm";
@@ -37,7 +38,27 @@ export const OrganizationPage = () => {
         ))}
       </div>
       <hr />
-      <RoleForm onRoleAdded={loadLeaders} />
+
+      {/* Renders only if the user is authenticated */}
+      <SignedIn>
+        <RoleForm onRoleAdded={loadLeaders} />
+      </SignedIn>
+
+      {/* Renders only if the user is logged out */}
+      <SignedOut>
+        <div
+          className="login-prompt"
+          style={{
+            textAlign: "center",
+            padding: "2rem",
+            background: "#f5f5f5",
+            borderRadius: "8px",
+          }}
+        >
+          <h3>Please log in to add a new leader.</h3>
+          <SignInButton mode="modal" />
+        </div>
+      </SignedOut>
     </div>
   );
 };

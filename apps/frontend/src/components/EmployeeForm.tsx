@@ -1,4 +1,5 @@
 import { type FormEvent, useState } from "react";
+import { useAuth } from "@clerk/clerk-react";
 import type { Department } from "../types/Employee";
 import { useFormInput } from "../hooks/useFormInput";
 import { employeeService } from "../services/employeeService";
@@ -9,25 +10,33 @@ interface Props {
 }
 
 export const EmployeeForm = ({ departments, onEmployeeAdded }: Props) => {
-  // Use custom hooks
   const nameInput = useFormInput("");
   const deptInput = useFormInput("");
   const [globalError, setGlobalError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  // Extract the getToken function from Clerk's hook
+  const { getToken } = useAuth();
+
+  // Make the submit handler async
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setGlobalError(null);
 
     try {
-      // Service handles validation and saving
-      employeeService.createEmployee(nameInput.value, deptInput.value);
+      // Retrieve the active session token
+      const token = await getToken();
 
-      // Success: Clear inputs and refresh parent
+      // Pass the token to your updated service
+      await employeeService.createEmployee(
+        nameInput.value,
+        deptInput.value,
+        token,
+      );
+
       nameInput.reset();
       deptInput.reset();
       onEmployeeAdded();
     } catch (err: any) {
-      // Failure: Display the error from the service
       setGlobalError(err.message);
     }
   };
