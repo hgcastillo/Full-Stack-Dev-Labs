@@ -19,7 +19,7 @@ export const employeeRepo = {
     await prisma.employee.create({
       data: {
         firstName: newEmployee.firstName,
-        lastName: newEmployee.lastName,
+        lastName: newEmployee.lastName ?? null, // This fixes the error
         departmentId: department.id,
       },
     });
