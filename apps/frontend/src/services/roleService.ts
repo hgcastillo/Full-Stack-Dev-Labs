@@ -1,14 +1,13 @@
 import { leadershipRepo } from "../api/leadershipRepo";
 
 export const roleService = {
-  createRole: async (name: string, roleTitle: string) => {
-    // The Back-end now handles validation and duplicate checking,
-    // so we just pass the data through to the repo.
+  createRole: async (name: string, roleTitle: string, token: string | null) => {
+    // Pass the token down to the repository
     const newRole = {
       name,
       role: roleTitle,
     };
 
-    return await leadershipRepo.addRole(newRole);
+    return await leadershipRepo.addRole(newRole, token);
   },
 };

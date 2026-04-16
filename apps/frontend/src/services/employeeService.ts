@@ -1,9 +1,13 @@
 import { employeeRepo } from "../api/employeeRepo";
 
 export const employeeService = {
-  createEmployee: async (firstName: string, departmentName: string) => {
-    // The Back-end now handles validation, so we just pass the data
+  createEmployee: async (
+    firstName: string,
+    departmentName: string,
+    token: string | null,
+  ) => {
+    // Pass the token down to the repository
     const newEmployee = { firstName };
-    return await employeeRepo.addEmployee(newEmployee, departmentName);
+    return await employeeRepo.addEmployee(newEmployee, departmentName, token);
   },
 };

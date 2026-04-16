@@ -1,4 +1,5 @@
 import { type FormEvent, useState } from "react";
+import { useAuth } from "@clerk/clerk-react";
 import { useFormInput } from "../hooks/useFormInput";
 import { roleService } from "../services/roleService";
 
@@ -11,12 +12,21 @@ export const RoleForm = ({ onRoleAdded }: Props) => {
   const roleInput = useFormInput("");
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  // Extract the getToken function
+  const { getToken } = useAuth();
+
+  // Make the submit handler async
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
 
     try {
-      roleService.createRole(nameInput.value, roleInput.value);
+      // Retrieve the active session token
+      const token = await getToken();
+
+      // Pass the token to your updated service
+      await roleService.createRole(nameInput.value, roleInput.value, token);
+
       nameInput.reset();
       roleInput.reset();
       onRoleAdded();
@@ -29,6 +39,7 @@ export const RoleForm = ({ onRoleAdded }: Props) => {
     <section className="employee-form-container">
       <h2>Add New Leader</h2>
       {error && <div className="error-message">{error}</div>}
+
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Name:</label>

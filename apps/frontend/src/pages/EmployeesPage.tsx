@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
 import { DepartmentSection } from "../components/DepartmentSection";
 import { EmployeeForm } from "../components/EmployeeForm";
 import { employeeRepo } from "../api/employeeRepo";
@@ -37,8 +38,27 @@ export const EmployeesPage = () => {
         />
       ))}
       <hr />
-      {/* Pass the async loadData function as the refresh trigger */}
-      <EmployeeForm departments={orgData} onEmployeeAdded={loadData} />
+
+      {/* Renders only if the user is authenticated */}
+      <SignedIn>
+        <EmployeeForm departments={orgData} onEmployeeAdded={loadData} />
+      </SignedIn>
+
+      {/* Renders only if the user is logged out */}
+      <SignedOut>
+        <div
+          className="login-prompt"
+          style={{
+            textAlign: "center",
+            padding: "2rem",
+            background: "#f5f5f5",
+            borderRadius: "8px",
+          }}
+        >
+          <h3>Please log in to add a new employee.</h3>
+          <SignInButton mode="modal" />
+        </div>
+      </SignedOut>
     </div>
   );
 };

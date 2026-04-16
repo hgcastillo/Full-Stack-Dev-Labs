@@ -9,10 +9,16 @@ export const leadershipRepo = {
     return response.json();
   },
 
-  addRole: async (newRole: { name: string; role: string }): Promise<void> => {
+  addRole: async (
+    newRole: { name: string; role: string },
+    token: string | null, // Added token parameter
+  ): Promise<void> => {
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Injected token into headers
+      },
       body: JSON.stringify({ name: newRole.name, roleTitle: newRole.role }),
     });
 
