@@ -7,7 +7,12 @@ import leadershipRoutes from "./routes/leadershipRoutes";
 const app: Application = express();
 
 // Global Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://full-stack-dev-labs.vercel.app"],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 // Clerk must be initialized before routes to process authorization claims
