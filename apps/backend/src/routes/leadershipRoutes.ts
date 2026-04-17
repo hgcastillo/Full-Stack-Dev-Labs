@@ -7,22 +7,28 @@ import {
 
 const router = Router();
 
-// 1. Custom middleware to block unauthorized API requests
-const requireApiAuth = (req: Request, res: Response, next: NextFunction) => {
-  const auth = getAuth(req);
+/**
+ * Lab 5.2: Role-Based Authorization Middleware
+ * Verifies that the user has the 'org:admin' role before allowing data changes.
+ */
+const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
+  const { sessionClaims } = getAuth(req);
 
-  if (!auth.userId) {
-    // Send standard JSON instead of a redirect
-    return res.status(401).json({ message: "Unauthorized access" });
+  // Check for the specific administrator role within the Clerk Organization
+  if (sessionClaims?.org_role !== "org:admin") {
+    return res.status(403).json({
+      message:
+        "Forbidden: You must be an Administrator to manage leadership roles.",
+    });
   }
 
   next();
 };
 
-// GET: http://localhost:5000/api/leadership
+// GET: Visible to all authenticated users (Viewers/Members/Admins)
 router.get("/", getAllRoles);
 
-// POST: http://localhost:5000/api/leadership
-router.post("/", requireApiAuth, createNewRole);
+// POST: Restricted to Admins only for Lab 5.2
+router.post("/", requireAdmin, createNewRole);
 
 export default router;

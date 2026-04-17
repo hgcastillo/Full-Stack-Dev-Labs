@@ -6,32 +6,26 @@ import leadershipRoutes from "./routes/leadershipRoutes";
 
 const app: Application = express();
 
-/**
- * Middleware
- */
-// Enable CORS so the Front-end (typically port 5173) can talk to the Back-end
+// Global Middleware
 app.use(cors());
-
-// Parse incoming JSON requests
 app.use(express.json());
+
+// Clerk must be initialized before routes to process authorization claims
 app.use(clerkMiddleware());
 
 /**
  * Routes
- * Following the Route-Controller-Service-Repository pattern
+ * Pattern: Route -> Controller -> Service -> Repository
  */
 app.use("/api/employees", employeeRoutes);
 app.use("/api/leadership", leadershipRoutes);
 
-/**
- * Server Activation
- */
 const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`
-    🚀 Server is running!
+    🚀 Backend Server Ready for Lab 5.2!
     📡 URL: http://localhost:${PORT}
-    🛠️  Pattern: Route-Controller-Service-Repository enabled.
+    🛠️  Mode: Role-Based Authorization (Admin-Only POST)
     `);
 });
 

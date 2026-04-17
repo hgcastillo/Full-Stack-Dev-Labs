@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  Protect,
+  OrganizationSwitcher,
+} from "@clerk/clerk-react";
 import { DepartmentSection } from "../components/DepartmentSection";
 import { EmployeeForm } from "../components/EmployeeForm";
 import { employeeRepo } from "../api/employeeRepo";
@@ -9,7 +15,6 @@ export const EmployeesPage = () => {
   const [orgData, setOrgData] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load data on mount using async/await
   const loadData = async () => {
     try {
       setLoading(true);
@@ -30,6 +35,17 @@ export const EmployeesPage = () => {
 
   return (
     <div className="employees-page">
+      {/* 2. ADDED SWITCHER: This is your 'Organization Icon' */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "1rem",
+        }}
+      >
+        <OrganizationSwitcher hidePersonal={true} />
+      </div>
+
       {orgData.map((dept) => (
         <DepartmentSection
           key={dept.name}
@@ -39,12 +55,20 @@ export const EmployeesPage = () => {
       ))}
       <hr />
 
-      {/* Renders only if the user is authenticated */}
       <SignedIn>
-        <EmployeeForm departments={orgData} onEmployeeAdded={loadData} />
+        <Protect
+          role="org:admin"
+          fallback={
+            <p style={{ textAlign: "center", color: "#666" }}>
+              You are logged in as a Viewer. Only Administrators can add
+              employees.
+            </p>
+          }
+        >
+          <EmployeeForm departments={orgData} onEmployeeAdded={loadData} />
+        </Protect>
       </SignedIn>
 
-      {/* Renders only if the user is logged out */}
       <SignedOut>
         <div
           className="login-prompt"

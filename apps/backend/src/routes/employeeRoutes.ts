@@ -7,22 +7,29 @@ import {
 
 const router = Router();
 
-// 1. Create a custom middleware to block unauthorized API requests
-const requireApiAuth = (req: Request, res: Response, next: NextFunction) => {
-  const auth = getAuth(req);
+/**
+ * Lab 5.2: Role-Based Authorization Middleware
+ * This blocks anyone who isn't a designated Administrator in Clerk.
+ */
+const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
+  const { sessionClaims } = getAuth(req);
 
-  if (!auth.userId) {
-    // Send standard JSON instead of a redirect
-    return res.status(401).json({ message: "Unauthorized access" });
+  // 1. Check if the user is part of an organization and has the admin role
+  // Clerk stores roles in sessionClaims.org_role
+  if (sessionClaims?.org_role !== "org:admin") {
+    return res.status(403).json({
+      message:
+        "Forbidden: You must be an Administrator to perform this action.",
+    });
   }
 
   next();
 };
 
-// GET: http://localhost:5000/api/employees
+// GET: Accessible to everyone (Viewers and Admins)
 router.get("/", getAllDepartments);
 
-// POST: http://localhost:5000/api/employees
-router.post("/", requireApiAuth, createNewEmployee);
+// POST: Strictly restricted to Admins for Lab 5.2
+router.post("/", requireAdmin, createNewEmployee);
 
 export default router;
